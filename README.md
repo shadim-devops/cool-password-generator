@@ -13,6 +13,8 @@ This project demonstrates basic Docker containerization of a static web applicat
 using Nginx, including image build and container runtime configuration.
 
 Application is available at: http://localhost:8080
+Also available on GitHub Pages:
+https://shadim-devops.github.io/cool-password-generator/
 
 ## Run with Docker
 
