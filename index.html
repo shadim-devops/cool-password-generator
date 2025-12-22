@@ -4,198 +4,125 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OneFile Password Generator</title>
-  <meta name="description" content="Secure password generator in a single HTML file. Ready for GitHub/GitLab Pages deployment." />
+  <meta name="description" content="Secure password generator in a single HTML file. Ready for GitHub Pages or Docker deployment." />
   <style>
-    :root{--bg:#0b1220;--panel:#0f172a;--text:#e5e7eb;--muted:#94a3b8;--border:#1f2937;--btn:#111827;--btnh:#172033;--accent:#22c55e;--bad:#ef4444;--warn:#f59e0b;--ok:#22c55e;--great:#06b6d4}
+    :root{--bg:#0b1220;--panel:#0f172a;--text:#e5e7eb;--muted:#94a3b8;--border:#1f2937;--btn:#111827;--btnh:#172033;--bad:#ef4444;--warn:#f59e0b;--ok:#22c55e;--great:#06b6d4}
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:radial-gradient(800px 500px at 90% -10%,#0e2a1f00,#0e2a1f),
-                 radial-gradient(900px 500px at -10% 110%,#111827,#0b1220);
-         color:var(--text);
-         font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif;
-         display:flex;align-items:center;justify-content:center}
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(900px 500px at -10% 110%,#111827,#0b1220);
+      color:var(--text);font:16px/1.5 system-ui,sans-serif}
     .wrap{width:min(900px,94vw)}
-    .card{background:color-mix(in oklab, var(--panel), transparent 25%);
-          border:1px solid var(--border);border-radius:18px;padding:22px;
-          box-shadow:0 10px 35px rgba(0,0,0,.35)}
-    h1{margin:0 0 12px;font-size:28px}
-    p.sub{margin:0 0 18px;color:var(--muted)}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:22px}
+    h1{margin:0 0 10px;font-size:28px}
+    .sub{color:var(--muted);margin-bottom:18px}
     .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
     .box{background:#0b1220;border:1px solid var(--border);border-radius:14px;padding:14px}
-    .out{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-         font-size:18px;word-break:break-all}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    label{display:flex;gap:10px;align-items:center}
-    input[type="number"]{width:84px}
-    input, select{background:#0b1220;color:var(--text);
-                  border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-    input[type="checkbox"]{width:18px;height:18px}
-    button{appearance:none;border:1px solid #263045;background:var(--btn);
-           color:var(--text);padding:10px 14px;border-radius:12px;
-           font-weight:600;cursor:pointer;transition:.15s}
+    button{border:1px solid #263045;background:var(--btn);color:var(--text);
+      padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
     button:hover{background:var(--btnh)}
-    .strength{height:10px;border-radius:999px;background:#0b1220;
-              border:1px solid var(--border);overflow:hidden}
-    .bar{height:100%;width:0%;background:var(--bad);
-         transition:width .2s ease, background .2s ease}
-    .meta{display:flex;justify-content:space-between;
-          color:var(--muted);font-size:13px;margin-top:6px}
-    .hint{color:var(--muted);font-size:13px;margin-top:10px}
-    footer{margin-top:16px;color:var(--muted);font-size:13px}
-    .toast{position:fixed;inset:auto 0 24px 0;display:grid;
-           place-items:center;pointer-events:none}
-    .toast > div{background:#052e1b;border:1px solid #22c55e;
-                 padding:10px 14px;border-radius:12px;
-                 color:#bbf7d0;opacity:0;transform:translateY(10px);
-                 transition:.25s}
-    .toast.show > div{opacity:1;transform:translateY(0)}
+    input{background:#0b1220;color:var(--text);border:1px solid var(--border);
+      border-radius:10px;padding:8px}
+    .out{font-family:monospace;font-size:18px;word-break:break-all;margin-top:10px}
+    .strength{height:10px;border-radius:999px;background:#0b1220;border:1px solid var(--border);overflow:hidden;margin-top:12px}
+    .bar{height:100%;width:0;background:var(--bad)}
+    .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:6px}
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
     @media(max-width:800px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>OneFile Password Generator</h1>
-      <p class="sub">Single-page app, no build step. Upload index.html and it just works.</p>
+<div class="wrap">
+  <div class="card">
+    <h1>🔐 OneFile Password Generator</h1>
+    <div class="sub">Single-page app, no build step. Just open index.html and it works.</div>
 
-      <div class="grid">
-        <div class="box">
-          <div class="row" style="margin-bottom:10px">
-            <button id="btnGen">Generate</button>
-            <button id="btnCopy">Copy</button>
-            <button id="btnShare">Share</button>
-            <span class="hint">Shortcuts: G — generate, C — copy</span>
-          </div>
-
-          <div class="out" id="out">Click “Generate”</div>
-
-          <div class="strength" style="margin-top:12px">
-            <div class="bar" id="bar"></div>
-          </div>
-          <div class="meta">
-            <span id="labelStrength">Strength: —</span>
-            <span id="labelEntropy">Entropy: —</span>
-          </div>
+    <div class="grid">
+      <div class="box">
+        <div class="row">
+          <button onclick="generate()">Generate</button>
+          <button onclick="copy()">Copy</button>
         </div>
 
-        <div class="box">
-          <div class="row" style="margin-bottom:10px">
-            <label>Length <input type="number" id="len" min="6" max="128" value="16"></label>
-            <label>Count <input type="number" id="count" min="1" max="10" value="1"></label>
-          </div>
+        <div id="out" class="out">Click “Generate”</div>
 
-          <div class="row">
-            <label><input type="checkbox" id="lower" checked> a–z</label>
-            <label><input type="checkbox" id="upper" checked> A–Z</label>
-            <label><input type="checkbox" id="digits" checked> 0–9</label>
-            <label><input type="checkbox" id="symbols"> symbols</label>
-            <label><input type="checkbox" id="ambig" checked> exclude ambiguous (O0l1I)</label>
-          </div>
-
-          <div class="row" style="margin-top:6px">
-            <label><input type="checkbox" id="mustEach" checked>
-              guarantee each selected class
-            </label>
-          </div>
-
-          <div class="row" style="margin-top:10px">
-            <button id="btnPronounce">Pronounceable</button>
-            <span class="hint">Pseudo-word like doruve-tilo</span>
-          </div>
+        <div class="strength"><div id="bar" class="bar"></div></div>
+        <div class="meta">
+          <span id="strength">Strength: —</span>
+          <span id="entropy">Entropy: —</span>
         </div>
       </div>
 
-      <footer>
-        Works fully offline in your browser. No data is sent anywhere.
-      </footer>
+      <div class="box">
+        <div class="row">
+          Length <input id="len" type="number" value="16" min="6" max="128">
+          Count <input id="count" type="number" value="1" min="1" max="10">
+        </div>
+
+        <div class="row">
+          <label><input type="checkbox" id="lower" checked> a–z</label>
+          <label><input type="checkbox" id="upper" checked> A–Z</label>
+          <label><input type="checkbox" id="digits" checked> 0–9</label>
+          <label><input type="checkbox" id="symbols"> symbols</label>
+        </div>
+
+        <div class="row">
+          <label><input type="checkbox" id="ambig" checked> exclude ambiguous characters</label>
+        </div>
+
+        <div class="row">
+          <label><input type="checkbox" id="must" checked> guarantee each selected class</label>
+        </div>
+      </div>
     </div>
+
+    <footer>
+      Works fully offline in your browser. No data is sent anywhere.
+    </footer>
   </div>
+</div>
 
-  <div class="toast" id="toast"><div>Copied</div></div>
+<script>
+const sets={
+  lower:'abcdefghijklmnopqrstuvwxyz',
+  upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  digits:'0123456789',
+  symbols:'!@#$%^&*()_+{}[]<>?/'
+}
+const ambig=new Set('O0l1I')
 
-  <script>
-    const el = id => document.getElementById(id)
-    const rand = n => crypto.getRandomValues(new Uint32Array(1))[0] % n
+function pool(){
+  let p=''
+  if(lower.checked)p+=sets.lower
+  if(upper.checked)p+=sets.upper
+  if(digits.checked)p+=sets.digits
+  if(symbols.checked)p+=sets.symbols
+  if(ambig.checked)p=[...p].filter(c=>!ambig.has(c)).join('')
+  return p
+}
 
-    const SETS = {
-      lower: 'abcdefghijklmnopqrstuvwxyz',
-      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      digits:'0123456789',
-      symbols:'!@#$%^&*()_+{}[]<>?/\\|~.,;:-='
-    }
-    const AMBIG = new Set('O0l1I|')
+function generate(){
+  const p=pool()
+  if(!p)return
+  const l=+len.value
+  const c=+count.value
+  let res=[]
+  for(let i=0;i<c;i++){
+    let pwd=''
+    while(pwd.length<l) pwd+=p[Math.floor(Math.random()*p.length)]
+    res.push(pwd)
+  }
+  out.textContent=res.join('\n')
+  const bits=Math.round(l*Math.log2(p.length))
+  entropy.textContent=`Entropy: ${bits} bits`
+  strength.textContent=bits>80?'Strength: Strong':'Strength: Medium'
+  bar.style.width=Math.min(bits,100)+'%'
+  bar.style.background=bits>80?'#22c55e':'#f59e0b'
+}
 
-    function buildPool(o){
-      let p=''
-      if(o.lower) p+=SETS.lower
-      if(o.upper) p+=SETS.upper
-      if(o.digits)p+=SETS.digits
-      if(o.symbols)p+=SETS.symbols
-      if(o.ambig)p=[...p].filter(c=>!AMBIG.has(c)).join('')
-      return p
-    }
-
-    function gen(len,o){
-      const pool=buildPool(o)
-      if(!pool) return ''
-      let pwd=[]
-      const cls=[]
-      if(o.lower)cls.push(SETS.lower)
-      if(o.upper)cls.push(SETS.upper)
-      if(o.digits)cls.push(SETS.digits)
-      if(o.symbols)cls.push(SETS.symbols)
-      if(o.mustEach) cls.forEach(c=>pwd.push(c[rand(c.length)]))
-      while(pwd.length<len) pwd.push(pool[rand(pool.length)])
-      for(let i=pwd.length-1;i>0;i--){
-        const j=rand(i+1);[pwd[i],pwd[j]]=[pwd[j],pwd[i]]
-      }
-      return pwd.slice(0,len).join('')
-    }
-
-    function entropy(len,size){
-      return size>1?Math.round(len*Math.log2(size)):0
-    }
-
-    function meter(bits){
-      const bar=el('bar')
-      const lbl=el('labelStrength')
-      const ent=el('labelEntropy')
-      let c='--bad',t='Weak'
-      if(bits>=60){c='--warn';t='Medium'}
-      if(bits>=80){c='--ok';t='Strong'}
-      if(bits>=100){c='--great';t='Very strong'}
-      bar.style.width=Math.min(100,bits)+'%'
-      bar.style.background=getComputedStyle(document.documentElement)
-        .getPropertyValue(c)
-      lbl.textContent='Strength: '+t
-      ent.textContent='Entropy: '+bits+' bits'
-    }
-
-    function generate(){
-      const o={
-        lower:el('lower').checked,
-        upper:el('upper').checked,
-        digits:el('digits').checked,
-        symbols:el('symbols').checked,
-        ambig:el('ambig').checked,
-        mustEach:el('mustEach').checked
-      }
-      const len=+el('len').value||16
-      const cnt=+el('count').value||1
-      const pool=buildPool(o)
-      const list=Array.from({length:cnt},()=>gen(len,o))
-      el('out').textContent=list.join('\n')
-      meter(entropy(len,pool.length))
-    }
-
-    async function copy(){
-      await navigator.clipboard.writeText(el('out').textContent)
-      const t=el('toast');t.classList.add('show')
-      setTimeout(()=>t.classList.remove('show'),1200)
-    }
-
-    el('btnGen').onclick=generate
-    el('btnCopy').onclick=copy
-  </script>
+function copy(){
+  navigator.clipboard.writeText(out.textContent)
+}
+</script>
 </body>
 </html>
