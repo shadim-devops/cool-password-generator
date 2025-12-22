@@ -11,3 +11,4 @@ Simple static HTML password generator.
 
 ```bash
 docker build -t cool-password-generator . && docker run -p 8080:80 cool-password-generator
+Application is available at: http://localhost:8080
