@@ -1,18 +1,30 @@
-# Cool Password Generator
+# OneFile Password Generator
 
-Simple static HTML password generator.
+A secure, offline password generator implemented as a single HTML file.
 
-## Tech stack
+The application runs entirely in the browser, requires no build step, and can be deployed directly to GitHub Pages or served via Nginx.
+
+## Features
+
+- Cryptographically secure password generation (Web Crypto API)
+- Configurable length and number of passwords
+- Optional character classes (lowercase, uppercase, digits, symbols)
+- Exclusion of ambiguous characters
+- Entropy-based strength indicator
+- Pronounceable password mode
+- Works fully offline
+
+## Tech Stack
+
 - HTML
+- CSS
+- Vanilla JavaScript
 - Docker
 - Nginx
 
 ## Run with Docker
 
-Build image:
+Build the image:
+
 ```bash
-docker build -t cool-password-generator .
-Run container:
-docker run -p 8080:80 cool-password-generator
-Open in browser:
-http://localhost:8080
+docker build -t onefile-password-generator .
